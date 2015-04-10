@@ -11,7 +11,7 @@ public:
 	User *next;
 	Data *data;
 
-	bool operator > (User*);
+	bool operator > (User);
 };
 
 class Ad {
@@ -26,7 +26,7 @@ public:
 	Ad *next;
 	Data *data;
 
-	bool operator > (Ad*);
+	bool operator > (Ad);
 };
 
 class Data {

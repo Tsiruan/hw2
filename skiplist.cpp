@@ -27,19 +27,39 @@ SkipNode_Ad::SkipNode_Ad() {
 	ad = NULL;
 }
 
-bool User::operator > (User *usr) {
-	if (ID == usr -> ID)
-		return data -> ad -> ID > usr -> data -> ad -> ID;
+
+bool User::operator > (User usr) {
+	if (ID == usr.ID)
+		return data -> ad -> ID > usr.data -> ad -> ID;
 	else
-		return ID > usr -> ID;
+		return ID > usr.ID;
 }
 
-bool Ad::operator > (Ad *ad) {
-	if (ID == ad -> ID)
-		return data -> user -> ID > ad -> data -> user -> ID;
+bool Ad::operator > (Ad ad) {
+	if (ID == ad.ID)
+		return data -> user -> ID > ad.data -> user -> ID;
 	else
-		return ID > ad -> ID;
+		return ID > ad.ID;
 }
+
+
+
+/*
+bool operator > (User *usr_1, User *usr_2) {
+	if (usr_1 -> ID == usr_2 -> ID)
+		return usr_1 -> data -> ad -> ID > usr_2 -> data -> ad -> ID;
+	else
+		return usr_1 -> ID > usr_2 -> ID;
+}
+
+bool operator > (Ad *ad_1, Ad *ad_2) {
+	if (ad_1 -> ID == ad_2 -> ID)
+		return ad_1 -> data -> user -> ID > ad_2 -> data -> user -> ID;
+	else
+		return ad_1 -> ID > ad_2 -> ID;
+}
+*/
+
 
 
 int main(void) {
@@ -149,7 +169,7 @@ int main(void) {
 		// find the entrance into the linklist
 		for (now_level = SKIP_LEVEL; now_level > 0; now_level--) {
 			// move to next
-			while (user_cursor -> next != NULL && new_data -> user > user_cursor -> next -> user)
+			while (user_cursor -> next != NULL && *(new_data -> user) > *(user_cursor -> next -> user))
 				user_cursor = user_cursor -> next;
 			// build skip node
 			if (now_level <= build_usr_level) {
@@ -225,7 +245,7 @@ int main(void) {
 		for (now_level = SKIP_LEVEL; now_level > 0; now_level--) {
 			cout << "ad_now_level = " << now_level << endl;          // debug
 			// move to next
-			while (ad_cursor -> next != NULL && new_data -> ad > ad_cursor -> next -> ad)
+			while (ad_cursor -> next != NULL && *(new_data -> ad) > *(ad_cursor -> next -> ad))
 				ad_cursor = ad_cursor -> next;
 			cout << "flag_9" << endl;               // debug
 			// build skip node
