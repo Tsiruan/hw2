@@ -50,12 +50,38 @@ bool Ad::operator > (Ad *ad) {
 
 void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
 	int c = 0;
-	int imp = 0
+	int imp = 0;
 	User *ptr_user;
 
+	// search for the entrance into the linklist
 	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
-		while (usr_cursor -> next != NULL && )
+		while (usr_cursor -> next != NULL && usr > usr_cursor -> next -> user -> ID)
+			usr_cursor = usr_cursor -> next;
+		if (usr_cursor -> decline != NULL)
+			usr_cursor = usr_cursor -> decline;
 	}
+	if (usr_cursor -> user == NULL) {
+		ptr_user = usr_cursor -> decline -> user;
+	} else {
+		ptr_user = usr_cursor -> user;
+	}
+	// search for the value "userID == usr"
+	while (usr > ptr_user -> ID) {
+		ptr_user = ptr_user -> next;
+	}
+	// search for the value "adID == ad"
+	while (ad > ptr_user -> data -> ad -> ID)
+		ptr_user = ptr_user -> next;
+	while (ad == ptr_user -> data -> ad -> ID && usr == ptr_user -> ID) {
+		c += ptr_user -> data -> click;
+		imp += ptr_user -> data -> impression;
+		ptr_user = ptr_user -> next;
+	}
+
+	cout << "********************" << endl;
+	cout << c << " " << imp << endl;
+	cout << "********************" << endl;
+	return;
 }
 
 int main(void) {
@@ -299,6 +325,7 @@ int main(void) {
 	fclose(fp);
 
 
+	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
 
 
 	return 0;
