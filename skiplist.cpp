@@ -4,7 +4,8 @@
 #include <cstring>
 #include "skiplist.h"
 
-#define SKIP_LEVEL 50
+#define SKIP_LEVEL 57
+#define DATA_MAX 1000000
 
 using namespace std;
 
@@ -331,7 +332,7 @@ int main(int argc, char *argv[]) {
 
 		// decide the amount of the nodes we will be building
 		if (i != SKIP_LEVEL)
-			skip_count[i] = (SKIP_LEVEL - i) * (SKIP_LEVEL - i);
+			skip_count[i] = (SKIP_LEVEL - i) * (SKIP_LEVEL - i) * (SKIP_LEVEL - i);
 
 		//cout << "flag_2.1" << endl;                 // debug
 
@@ -349,8 +350,13 @@ int main(int argc, char *argv[]) {
 	//cout << "flag_3" << endl;   // debug flag_3
 
 
+
+	long long data_control = 0;                               // for work station testing
 	// read in and insert a new data to the data structer
 	while (fscanf(fp, "%hu%d%llu%d%hu%hd%hd%d%d%d%d%d", &c, &imp, &url, &a, &adver, &d, &p, &q, &k, &t, &des, &u) != EOF) {
+		if (data_control > DATA_MAX)  // for work station testing
+			break;
+		data_control++;
 		int now_level;    // current level we are on
 		int build_usr_level, build_ad_level;
 		build_skip_user_ptr = NULL;
@@ -525,8 +531,13 @@ int main(int argc, char *argv[]) {
 		}
 		//cout << "flag_end" << endl;           // debug
 	}
-	//cout << "read in success" << endl;
+	cout << "read in success" << endl;
 	fclose(fp);
+
+
+	return 0;    // for work station testing
+
+
 
 	char click[10] = "clicked";
 	char gt[10] = "get";

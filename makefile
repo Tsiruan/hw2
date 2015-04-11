@@ -1,4 +1,4 @@
 trial: skiplist.cpp skiplist.h
-	g++ -g skiplist.cpp
+	g++ skiplist.cpp -O2 -o dsa_hw2_test.exe
 exe:
-	a.exe demotrack.txt < in.txt
+	./dsa_hw2_test.exe /tmp2/KDDCup2012/track2/kddcup2012track2.txt
