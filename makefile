@@ -1,2 +1,4 @@
 trial: skiplist.cpp skiplist.h
-	g++ skiplist.cpp
+	g++ -g skiplist.cpp
+exe:
+	a.exe demotrack.txt < in.txt

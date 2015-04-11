@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cassert>
+#include <cstring>
 #include "skiplist.h"
 
 #define SKIP_LEVEL 50
@@ -286,12 +287,13 @@ void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 	return;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
 	unsigned short int c, adver;
 	unsigned long long url;
 
+	char cmd[10];
 	FILE *fp;
 	int skip_count[SKIP_LEVEL];
 	// for building the user skip list
@@ -312,7 +314,7 @@ int main(void) {
 
 
 
-	fp = fopen("demotrack.txt", "r");
+	fp = fopen(argv[1], "r");
 	assert(fp != NULL);
 
 
@@ -523,15 +525,47 @@ int main(void) {
 		}
 		//cout << "flag_end" << endl;           // debug
 	}
-	cout << "read in success" << endl;
+	//cout << "read in success" << endl;
 	fclose(fp);
 
+	char click[10] = "clicked";
+	char gt[10] = "get";
+	char prft[10] = "profit";
+	char impre[10] = "impressed";
+	char qt[10] = "quit";
 
+	while (scanf("%s", cmd) != EOF) {
+		int u, a, q, p, d;
+		int u1, u2;
+		double theta;
+		if (strcmp(cmd, click) == 0) {
+			scanf("%d", &u);
+			clicked(u, &user_skip_head);
+		} else if (strcmp(cmd, gt) == 0) {
+			scanf("%d%d%d%d%d", &u, &a, &q, &p, &d);
+			get(u, a, q, p, d, &user_skip_head);
+		} else if (strcmp(cmd, prft) == 0) {
+			scanf("%a%lf", &a, &theta);
+			profit(a, theta, &ad_skip_head);
+		} else if (strcmp(cmd, impre) == 0) {
+			scanf("%d%d", &u1, &u2);
+			impressed(u1, u2, &user_skip_head);
+		} else if (strcmp(cmd, qt) == 0) {
+			cout << "# leave the program" << endl;
+			return 0;
+		}
+	}
+
+
+
+
+	/*
 	clicked(490234, &user_skip_head);
 	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
 	profit(21375650, 0.5, &ad_skip_head);
 	impressed(6231944, 490234, &user_skip_head);
-
+	*/
+	
 
 	return 0;
 }
