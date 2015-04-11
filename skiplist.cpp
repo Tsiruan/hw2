@@ -27,6 +27,11 @@ SkipNode_Ad::SkipNode_Ad() {
 	ad = NULL;
 }
 
+Ad_stream::Ad_stream() {
+	next = NULL;
+	ad = NULL;
+}
+
 
 bool User::operator > (User *usr) {
 	if (usr == NULL)
@@ -46,6 +51,18 @@ bool Ad::operator > (Ad *ad) {
 		return data -> user -> ID > ad -> data -> user -> ID;
 	else
 		return ID > ad -> ID;
+}
+
+bool check_property (Ad *ad_1, Ad *ad_2) {
+	if (ad_1->URL == ad_2->URL && ad_1->Advertiser == ad_2->Advertiser && ad_1->keyword == ad_2->keyword
+		 && ad_1->title == ad_2->title && ad_1->description == ad_2->description)
+		return true;
+	return false;
+}
+
+void print_ad_property(Ad *ad) {
+	cout << "\t" << ad -> URL << " " << ad -> Advertiser << " " << ad -> keyword << " " << ad -> title << " " << ad -> description << endl;
+	return;
 }
 
 void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
@@ -114,6 +131,119 @@ void clicked(int usr, SkipNode_User *usr_cursor) {
 			}
 		}
 		ptr_user = ptr_user -> next;
+	}
+	cout << "********************" << endl;
+	return;
+}
+
+void impressed(int usr_1, int usr_2, SkipNode_User *usr_skip_head) {
+	SkipNode_User *usr1_cursor;
+	SkipNode_User *usr2_cursor;
+	User *ptr_user1, *ptr_user2;
+
+	usr1_cursor = usr_skip_head;
+	usr2_cursor = usr_skip_head;
+
+	// search for the entrance of usr_1 into the linklist
+	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
+		while (usr1_cursor -> next != NULL && usr_1 > usr1_cursor -> next -> user -> ID)
+			usr1_cursor = usr1_cursor -> next;
+		if (usr1_cursor -> decline != NULL)
+			usr1_cursor = usr1_cursor -> decline;
+	}
+	if (usr1_cursor -> user == NULL) {
+		ptr_user1 = usr1_cursor -> decline -> user;
+	} else {
+		ptr_user1 = usr1_cursor -> user;
+	}
+	// search for the value "userID == usr_1"
+	while (usr_1 > ptr_user1 -> ID) {
+		ptr_user1 = ptr_user1 -> next;
+	}
+
+	// search for the entrance of usr_2 into the linklist
+	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
+		while (usr2_cursor -> next != NULL && usr_2 > usr2_cursor -> next -> user -> ID)
+			usr2_cursor = usr2_cursor -> next;
+		if (usr2_cursor -> decline != NULL)
+			usr2_cursor = usr2_cursor -> decline;
+	}
+	if (usr2_cursor -> user == NULL) {
+		ptr_user2 = usr2_cursor -> decline -> user;
+	} else {
+		ptr_user2 = usr2_cursor -> user;
+	}
+	// search for the value "userID == usr_2"
+	while (usr_2 > ptr_user2 -> ID) {
+		ptr_user2 = ptr_user2 -> next;
+	}
+
+	cout << "********************" << endl;
+
+	// read through user_1 & user_2 and generate an ad_stream of an ad and print it
+	while (ptr_user1 -> ID == usr_1 && ptr_user2 -> ID == usr_2) {
+		int same_ad;
+		Ad_stream ad_stream_head;
+		Ad_stream *ad_stream_ptr;
+		// find a same adID
+		while (ptr_user1 -> data -> ad -> ID != ptr_user2 -> data -> ad -> ID) {
+			if (ptr_user1 -> data -> ad -> ID > ptr_user2 -> data -> ad -> ID)
+				ptr_user2 = ptr_user2 -> next;
+			else
+				ptr_user1 = ptr_user1 -> next;
+			if (ptr_user1 -> ID != usr_1 || ptr_user2 -> ID != usr_2)
+				break;
+		}
+		if (ptr_user1 -> ID != usr_1 || ptr_user2 -> ID != usr_2)
+			break;
+		same_ad = ptr_user1 -> data -> ad -> ID;
+		// add all the ad of ID = same_ad into ad_stream
+		while (ptr_user1 -> data -> ad -> ID == same_ad && ptr_user1 -> ID == usr_1) {
+			int flag = 0;
+			ad_stream_ptr = &ad_stream_head;
+			while (ad_stream_ptr -> ad != NULL) {
+				if (check_property(ptr_user1 -> data -> ad, ad_stream_ptr -> ad)) {
+					ptr_user1 = ptr_user1 -> next;
+					flag = 1;
+					break;
+				}
+				ad_stream_ptr = ad_stream_ptr -> next;
+			}
+			if (flag == 1)
+				continue;
+			ad_stream_ptr -> ad = ptr_user1 -> data -> ad;
+			ad_stream_ptr -> next = new Ad_stream;
+			if (ptr_user1 -> next == NULL)
+				break;
+			ptr_user1 = ptr_user1 -> next;
+		}
+		while (ptr_user2 -> data -> ad -> ID == same_ad && ptr_user2 -> ID == usr_2) {
+			int flag = 0;
+			ad_stream_ptr = &ad_stream_head;
+			while (ad_stream_ptr -> ad != NULL) {
+				if (check_property(ptr_user2 -> data -> ad, ad_stream_ptr -> ad)) {
+					ptr_user2 = ptr_user2 -> next;
+					flag = 1;
+					break;
+				}
+				ad_stream_ptr = ad_stream_ptr -> next;
+			}
+			if (flag == 1)
+				continue;
+			ad_stream_ptr -> ad = ptr_user2 -> data -> ad;
+			ad_stream_ptr -> next = new Ad_stream;
+			if (ptr_user2 -> next == NULL)
+				break;
+			ptr_user2 = ptr_user2 -> next;
+		}
+		ad_stream_ptr = &ad_stream_head;
+		// print adID
+		cout << same_ad << endl;
+		// print property
+		while (ad_stream_ptr -> ad != NULL) {
+			print_ad_property(ad_stream_ptr -> ad);
+			ad_stream_ptr = ad_stream_ptr -> next;
+		}
 	}
 	cout << "********************" << endl;
 	return;
@@ -362,6 +492,7 @@ int main(void) {
 
 	clicked(490234, &user_skip_head);
 	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
+	impressed(6231944, 490234, &user_skip_head);
 
 
 	return 0;

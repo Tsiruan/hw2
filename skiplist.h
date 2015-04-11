@@ -60,3 +60,11 @@ public:
 
 	SkipNode_Ad();
 };
+
+class Ad_stream {
+public:
+	Ad_stream *next;
+	Ad *ad;
+
+	Ad_stream();
+};
