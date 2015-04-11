@@ -249,6 +249,43 @@ void impressed(int usr_1, int usr_2, SkipNode_User *usr_skip_head) {
 	return;
 }
 
+void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
+	Ad *ptr_ad;
+
+	// search for the entrance into the linklist
+	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
+		while (ad_cursor -> next != NULL && adID > ad_cursor -> next -> ad -> ID)
+			ad_cursor = ad_cursor -> next;
+		if (ad_cursor -> decline != NULL)
+			ad_cursor = ad_cursor -> decline;
+	}
+	if (ad_cursor -> ad == NULL) {
+		ptr_ad = ad_cursor -> decline -> ad;
+	} else {
+		ptr_ad = ad_cursor -> ad;
+	}
+	// search for the value "ptr_ad -> ID == adID"
+	while (adID > ptr_ad -> ID) {
+		ptr_ad = ptr_ad -> next;
+	}
+	cout << "********************" << endl;
+	while(ptr_ad -> ID == adID) {
+		int usr;
+		double c = 0, imp = 0;
+		usr = ptr_ad -> data -> user -> ID;
+
+		while (ptr_ad -> data -> user -> ID == usr && ptr_ad -> ID == adID) {
+			c += ptr_ad -> data -> click;
+			imp += ptr_ad -> data -> impression;
+			ptr_ad = ptr_ad -> next;
+		}
+		if (theta <= c/imp)
+			cout << usr << endl;
+	}
+	cout << "********************" << endl;
+	return;
+}
+
 int main(void) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
@@ -492,6 +529,7 @@ int main(void) {
 
 	clicked(490234, &user_skip_head);
 	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
+	profit(21375650, 0.5, &ad_skip_head);
 	impressed(6231944, 490234, &user_skip_head);
 
 
