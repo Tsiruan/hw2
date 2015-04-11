@@ -28,39 +28,23 @@ SkipNode_Ad::SkipNode_Ad() {
 }
 
 
-bool User::operator > (User usr) {
-	if (ID == usr.ID)
-		return data -> ad -> ID > usr.data -> ad -> ID;
+bool User::operator > (User *usr) {
+	if (usr == NULL)
+		return false;
+	if (ID == usr -> ID)
+		return data -> ad -> ID > usr -> data -> ad -> ID;
 	else
-		return ID > usr.ID;
+		return ID > usr -> ID;
 }
 
-bool Ad::operator > (Ad ad) {
-	if (ID == ad.ID)
-		return data -> user -> ID > ad.data -> user -> ID;
+bool Ad::operator > (Ad *ad) {
+	if (ad == NULL)
+		return false;
+	if (ID == ad -> ID)
+		return data -> user -> ID > ad -> data -> user -> ID;
 	else
-		return ID > ad.ID;
+		return ID > ad -> ID;
 }
-
-
-
-/*
-bool operator > (User *usr_1, User *usr_2) {
-	if (usr_1 -> ID == usr_2 -> ID)
-		return usr_1 -> data -> ad -> ID > usr_2 -> data -> ad -> ID;
-	else
-		return usr_1 -> ID > usr_2 -> ID;
-}
-
-bool operator > (Ad *ad_1, Ad *ad_2) {
-	if (ad_1 -> ID == ad_2 -> ID)
-		return ad_1 -> data -> user -> ID > ad_2 -> data -> user -> ID;
-	else
-		return ad_1 -> ID > ad_2 -> ID;
-}
-*/
-
-
 
 int main(void) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
@@ -84,7 +68,7 @@ int main(void) {
 
 
 
-	cout << "flag_1" << endl;   // debug flag_1
+	//cout << "flag_1" << endl;   // debug flag_1
 
 
 
@@ -92,7 +76,7 @@ int main(void) {
 	assert(fp != NULL);
 
 
-	cout << "flag_2" << endl;   // debug flag_2
+	//cout << "flag_2" << endl;   // debug flag_2
 
 
 
@@ -122,7 +106,7 @@ int main(void) {
 	ad_skip_head.next = NULL;     // i don't know why
 
 
-	cout << "flag_3" << endl;   // debug flag_3
+	//cout << "flag_3" << endl;   // debug flag_3
 
 
 	// read in and insert a new data to the data structer
@@ -150,7 +134,7 @@ int main(void) {
 		new_data -> ad -> description = des;
 
 
-		cout << "flag_4" << endl;         // debug
+		//cout << "flag_4" << endl;         // debug
 
 
 		// decide the build levels
@@ -162,7 +146,7 @@ int main(void) {
 		}
 
 
-		cout << "flag_5" << endl;         // debug
+		//cout << "flag_5" << endl;         // debug
 
 
 
@@ -171,17 +155,17 @@ int main(void) {
 		// find the entrance into the linklist
 		for (now_level = SKIP_LEVEL; now_level > 0; now_level--) {
 			// move to next
-			while (user_cursor -> next != NULL && *(new_data -> user) > *(user_cursor -> next -> user))
+			while (user_cursor -> next != NULL && *(new_data -> user) > user_cursor -> next -> user)
 				user_cursor = user_cursor -> next;
 			// build skip node
 			if (now_level <= build_usr_level) {
 				//cout << "levels: " << now_level << " " << build_usr_level << endl;           // debug
-				if (build_skip_user_ptr == NULL) {+
+				if (build_skip_user_ptr == NULL) {
 					build_skip_user_ptr = new SkipNode_User;
 					build_skip_user_ptr -> next = user_cursor -> next;
 					user_cursor -> next = build_skip_user_ptr;
 					build_skip_user_ptr -> user = new_data -> user;
-					cout << "flag_build_usr_node_success" << endl;      // debug
+					//cout << "flag_build_usr_node_success" << endl;      // debug
 				} else {
 					build_skip_user_ptr -> decline = new SkipNode_User;
 					build_skip_user_ptr = build_skip_user_ptr -> decline;
@@ -191,10 +175,11 @@ int main(void) {
 				}
 			}
 			// decline
-			user_cursor = user_cursor -> decline;
+			if (user_cursor -> decline != NULL)
+				user_cursor = user_cursor -> decline;
 		}
 
-		cout << "flag_7" << endl;            // debug
+		//cout << "flag_7" << endl;            // debug
 
 		// connect builded skip nodes to user
 		build_skip_user_ptr -> user = new_data -> user;
@@ -210,12 +195,12 @@ int main(void) {
 				new_data -> user -> next = NULL;
 			} else {
 				// search from the head of the link list
-				if (ptr_user > new_data -> user) {
+				if (*ptr_user > new_data -> user) {
 					// insert
 					new_data -> user -> next = ptr_user;
 					user_cursor -> decline -> user = new_data -> user;
 				} else {
-					while (new_data -> user > ptr_user -> next)
+					while (*(new_data -> user) > ptr_user -> next)
 						ptr_user = ptr_user -> next;
 					// insert
 					new_data -> user -> next = ptr_user -> next;
@@ -224,7 +209,7 @@ int main(void) {
 			}
 		} else {
 			ptr_user = user_cursor -> user;
-			while (new_data -> user > ptr_user -> next)
+			while (*(new_data -> user) > ptr_user -> next)
 				ptr_user = ptr_user -> next;
 			// insert
 			new_data -> user -> next = ptr_user -> next;
@@ -232,7 +217,7 @@ int main(void) {
 		}
 
 
-		cout << "flag_8" << endl;           // debug
+		//cout << "flag_8" << endl;           // debug
 
 
 		// insert "new_data -> ad" into linklist ====================
@@ -241,7 +226,7 @@ int main(void) {
 		for (now_level = SKIP_LEVEL; now_level > 0; now_level--) {
 			//cout << "ad_now_level: " << now_level << endl;          // debug
 			// move to next
-			while (ad_cursor -> next != NULL && *(new_data -> ad) > *(ad_cursor -> next -> ad))
+			while (ad_cursor -> next != NULL && *(new_data -> ad) > ad_cursor -> next -> ad)
 				ad_cursor = ad_cursor -> next;
 			//cout << "flag_9" << endl;               // debug
 			// build skip node
@@ -261,7 +246,8 @@ int main(void) {
 				}
 			}
 			// decline
-			ad_cursor = ad_cursor -> decline;
+			if (ad_cursor -> decline != NULL)
+				ad_cursor = ad_cursor -> decline;
 		}
 		// connect builded skip nodes to ad
 		build_skip_ad_ptr -> ad = new_data -> ad;
@@ -277,12 +263,12 @@ int main(void) {
 				new_data -> ad -> next = NULL;
 			} else {
 				// search from the head of the link list
-				if (ptr_ad > new_data -> ad) {
+				if (*ptr_ad > new_data -> ad) {
 					// insert
 					new_data -> ad -> next = ptr_ad;
 					ad_cursor -> decline -> ad = new_data -> ad;
 				} else {
-					while (new_data -> ad > ptr_ad -> next)
+					while (*(new_data -> ad) > ptr_ad -> next)
 						ptr_ad = ptr_ad -> next;
 					// insert
 					new_data -> ad -> next = ptr_ad -> next;
@@ -291,14 +277,14 @@ int main(void) {
 			}
 		} else {
 			ptr_ad = ad_cursor -> ad;
-			while (new_data -> ad > ptr_ad -> next)
+			while (*(new_data -> ad) > ptr_ad -> next)
 				ptr_ad = ptr_ad -> next;
 			// insert
 			new_data -> ad -> next = ptr_ad -> next;
 			ptr_ad -> next = new_data -> ad;
 		}
 
-		cout << "flag_end" << endl;           // debug
+		//cout << "flag_end" << endl;           // debug
 
 	}
 
