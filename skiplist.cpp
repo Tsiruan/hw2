@@ -31,9 +31,11 @@ SkipNode_Ad::SkipNode_Ad() {
 bool User::operator > (User *usr) {
 	if (usr == NULL)
 		return false;
-	if (ID == usr -> ID)
+	if (ID == usr -> ID) {
+		if (data -> ad -> ID == usr -> data -> ad -> ID)
+			return data -> query > usr -> data -> query;
 		return data -> ad -> ID > usr -> data -> ad -> ID;
-	else
+	} else
 		return ID > usr -> ID;
 }
 
@@ -46,6 +48,16 @@ bool Ad::operator > (Ad *ad) {
 		return ID > ad -> ID;
 }
 
+void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
+	int c = 0;
+	int imp = 0
+	User *ptr_user;
+
+	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
+		while (usr_cursor -> next != NULL && )
+	}
+}
+
 int main(void) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
@@ -53,7 +65,7 @@ int main(void) {
 	unsigned long long url;
 
 	FILE *fp;
-	int skip_count[SKIP_LEVEL - 1];
+	int skip_count[SKIP_LEVEL];
 	// for building the user skip list
 	SkipNode_User user_skip_head;        // the head, const
 	SkipNode_User *user_cursor;          // for searching on the existing skip node
@@ -102,8 +114,6 @@ int main(void) {
 		user_cursor = user_cursor -> decline;
 		ad_cursor = ad_cursor -> decline;
 	}
-
-	ad_skip_head.next = NULL;     // i don't know why
 
 
 	//cout << "flag_3" << endl;   // debug flag_3
@@ -283,14 +293,13 @@ int main(void) {
 			new_data -> ad -> next = ptr_ad -> next;
 			ptr_ad -> next = new_data -> ad;
 		}
-
 		//cout << "flag_end" << endl;           // debug
-
 	}
-
-
 	cout << "read in success" << endl;
-
 	fclose(fp);
+
+
+
+
 	return 0;
 }
