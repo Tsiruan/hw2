@@ -84,6 +84,41 @@ void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
 	return;
 }
 
+void clicked(int usr, SkipNode_User *usr_cursor) {
+	User *ptr_user;
+	int prev_ad = 0, prev_q = 0;
+
+	// search for the entrance into the linklist
+	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
+		while (usr_cursor -> next != NULL && usr > usr_cursor -> next -> user -> ID)
+			usr_cursor = usr_cursor -> next;
+		if (usr_cursor -> decline != NULL)
+			usr_cursor = usr_cursor -> decline;
+	}
+	if (usr_cursor -> user == NULL) {
+		ptr_user = usr_cursor -> decline -> user;
+	} else {
+		ptr_user = usr_cursor -> user;
+	}
+	// search for the value "userID == usr"
+	while (usr > ptr_user -> ID) {
+		ptr_user = ptr_user -> next;
+	}
+	cout << "********************" << endl;
+	while (usr == ptr_user -> ID) {
+		if (ptr_user -> data -> click != 0) {
+			if (prev_ad != ptr_user -> data -> ad -> ID && prev_q != ptr_user -> data -> query) {
+				prev_ad = ptr_user -> data -> ad -> ID;
+				prev_q = ptr_user -> data -> query;
+				cout << prev_ad << " " << prev_q << endl;
+			}
+		}
+		ptr_user = ptr_user -> next;
+	}
+	cout << "********************" << endl;
+	return;
+}
+
 int main(void) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
@@ -325,6 +360,7 @@ int main(void) {
 	fclose(fp);
 
 
+	clicked(490234, &user_skip_head);
 	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
 
 
