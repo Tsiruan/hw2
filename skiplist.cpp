@@ -119,6 +119,8 @@ int main(void) {
 		ad_cursor = ad_cursor -> decline;
 	}
 
+	ad_skip_head.next = NULL;     // i don't know why
+
 
 	cout << "flag_3" << endl;   // debug flag_3
 
@@ -155,7 +157,7 @@ int main(void) {
 		// we want to build skip nodes along the way we search through the skip list
 		int i = new_data -> ad -> ID % SKIP_LEVEL;
 		if (skip_count[i] > 0) {
-			build_usr_level = build_ad_level = (SKIP_LEVEL - i) * (SKIP_LEVEL - i);
+			build_usr_level = build_ad_level = i + 1;
 			skip_count[i]--;
 		}
 
@@ -173,15 +175,11 @@ int main(void) {
 				user_cursor = user_cursor -> next;
 			// build skip node
 			if (now_level <= build_usr_level) {
-				cout << "levels: " << now_level << " " << build_usr_level << endl;           // debug
-				if (build_skip_user_ptr == NULL) {
-					cout << "flag_.1" << endl;
+				//cout << "levels: " << now_level << " " << build_usr_level << endl;           // debug
+				if (build_skip_user_ptr == NULL) {+
 					build_skip_user_ptr = new SkipNode_User;
-					cout << "flag_.2" << endl;
 					build_skip_user_ptr -> next = user_cursor -> next;
-					cout << "flag_.3" << endl;
 					user_cursor -> next = build_skip_user_ptr;
-					cout << "flag_.4" << endl;
 					build_skip_user_ptr -> user = new_data -> user;
 					cout << "flag_build_usr_node_success" << endl;      // debug
 				} else {
@@ -194,8 +192,6 @@ int main(void) {
 			}
 			// decline
 			user_cursor = user_cursor -> decline;
-
-			cout << "flag_6" << endl;        // debug
 		}
 
 		cout << "flag_7" << endl;            // debug
@@ -243,14 +239,14 @@ int main(void) {
 		ad_cursor = &ad_skip_head;
 		// find the entrance into the linklist
 		for (now_level = SKIP_LEVEL; now_level > 0; now_level--) {
-			cout << "ad_now_level = " << now_level << endl;          // debug
+			//cout << "ad_now_level: " << now_level << endl;          // debug
 			// move to next
 			while (ad_cursor -> next != NULL && *(new_data -> ad) > *(ad_cursor -> next -> ad))
 				ad_cursor = ad_cursor -> next;
-			cout << "flag_9" << endl;               // debug
+			//cout << "flag_9" << endl;               // debug
 			// build skip node
 			if (now_level <= build_ad_level) {
-				cout << "levels:" << now_level << " " << build_ad_level << endl;     // debug
+				//cout << "levels: " << now_level << " " << build_ad_level << endl;     // debug
 				if (build_skip_ad_ptr == NULL) {
 					build_skip_ad_ptr = new SkipNode_Ad;
 					build_skip_ad_ptr -> next = ad_cursor -> next;
