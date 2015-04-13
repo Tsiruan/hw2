@@ -2,12 +2,21 @@
 #include <cstdio>
 #include <cassert>
 #include <cstring>
+#include <cstdlib>
+#include <time.h>
 #include "skiplist.h"
 
-#define SKIP_LEVEL 57
-#define DATA_MAX 1000000
+#define SKIP_LEVEL 25
+//#define DATA_MAX 1000000
 
 using namespace std;
+
+int node_amount_generate(int i) {
+	int power = 1;
+	for (int j = 0; j < i; j++)
+		power *= 2;
+	return power;
+}
 
 Data::Data() {
 	user = new User;
@@ -67,6 +76,9 @@ void print_ad_property(Ad *ad) {
 	return;
 }
 
+
+
+
 void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
 	int c = 0;
 	int imp = 0;
@@ -103,6 +115,9 @@ void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
 	return;
 }
 
+
+
+
 void clicked(int usr, SkipNode_User *usr_cursor) {
 	User *ptr_user;
 	int prev_ad = 0, prev_q = 0;
@@ -137,6 +152,9 @@ void clicked(int usr, SkipNode_User *usr_cursor) {
 	cout << "********************" << endl;
 	return;
 }
+
+
+
 
 void impressed(int usr_1, int usr_2, SkipNode_User *usr_skip_head) {
 	SkipNode_User *usr1_cursor;
@@ -251,6 +269,9 @@ void impressed(int usr_1, int usr_2, SkipNode_User *usr_skip_head) {
 	return;
 }
 
+
+
+
 void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 	Ad *ptr_ad;
 
@@ -288,6 +309,9 @@ void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 	return;
 }
 
+
+
+
 int main(int argc, char *argv[]) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
@@ -310,53 +334,35 @@ int main(int argc, char *argv[]) {
 	Ad *ptr_ad;      // for searching on the ad linklist
 
 
-
-	//cout << "flag_1" << endl;   // debug flag_1
-
-
+	srand(time(NULL));
 
 	fp = fopen(argv[1], "r");
 	assert(fp != NULL);
 
 
-	//cout << "flag_2" << endl;   // debug flag_2
-
-
-
 	// build the head of the skip lists (user & ad)
 	user_cursor = &user_skip_head;
-	//cout << "flag_2.0" << endl;                     // debug
 	ad_cursor = &ad_skip_head;
-	//cout << "flag_2.0" << endl;                     // debug
 	for (int i = 0; i <= SKIP_LEVEL; i++) {
-
 		// decide the amount of the nodes we will be building
 		if (i != SKIP_LEVEL)
-			skip_count[i] = (SKIP_LEVEL - i) * (SKIP_LEVEL - i) * (SKIP_LEVEL - i);
-
-		//cout << "flag_2.1" << endl;                 // debug
+			skip_count[i] = node_amount_generate(SKIP_LEVEL - i);
 
 		// building the nodes
 		user_cursor -> decline = new SkipNode_User;
 		ad_cursor -> decline = new SkipNode_Ad;
-
-		//cout << "flag_2.2" << endl;                 // debug
 
 		user_cursor = user_cursor -> decline;
 		ad_cursor = ad_cursor -> decline;
 	}
 
 
-	//cout << "flag_3" << endl;   // debug flag_3
-
-
-
 	long long data_control = 0;                               // for work station testing
 	// read in and insert a new data to the data structer
 	while (fscanf(fp, "%hu%d%llu%d%hu%hd%hd%d%d%d%d%d", &c, &imp, &url, &a, &adver, &d, &p, &q, &k, &t, &des, &u) != EOF) {
-		if (data_control > DATA_MAX)  // for work station testing
-			break;
-		data_control++;
+		//if (data_control > DATA_MAX)  // for work station testing
+		//	break;
+		//data_control++;
 		int now_level;    // current level we are on
 		int build_usr_level, build_ad_level;
 		build_skip_user_ptr = NULL;
@@ -380,21 +386,14 @@ int main(int argc, char *argv[]) {
 		new_data -> ad -> description = des;
 
 
-		//cout << "flag_4" << endl;         // debug
-
-
 		// decide the build levels
 		// we want to build skip nodes along the way we search through the skip list
-		int i = new_data -> ad -> ID % SKIP_LEVEL;
-		if (skip_count[i] > 0) {
+		int i = rand() % SKIP_LEVEL;
+		if (skip_count[i] != 0) {
 			build_usr_level = build_ad_level = i + 1;
 			skip_count[i]--;
 		}
-
-
-		//cout << "flag_5" << endl;         // debug
-
-
+		
 
 		// insert "new_data -> user" into linklist ====================
 		user_cursor = &user_skip_head;
@@ -424,8 +423,6 @@ int main(int argc, char *argv[]) {
 			if (user_cursor -> decline != NULL)
 				user_cursor = user_cursor -> decline;
 		}
-
-		//cout << "flag_7" << endl;            // debug
 
 		// connect builded skip nodes to user
 		build_skip_user_ptr -> user = new_data -> user;
@@ -461,9 +458,6 @@ int main(int argc, char *argv[]) {
 			new_data -> user -> next = ptr_user -> next;
 			ptr_user -> next = new_data -> user;
 		}
-
-
-		//cout << "flag_8" << endl;           // debug
 
 
 		// insert "new_data -> ad" into linklist ====================
@@ -529,13 +523,12 @@ int main(int argc, char *argv[]) {
 			new_data -> ad -> next = ptr_ad -> next;
 			ptr_ad -> next = new_data -> ad;
 		}
-		//cout << "flag_end" << endl;           // debug
 	}
-	cout << "read in success" << endl;
+	cout << "read in success" << endl;      // debug
 	fclose(fp);
 
 
-	return 0;    // for work station testing
+	//return 0;    // for work station testing
 
 
 
@@ -561,22 +554,9 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(cmd, impre) == 0) {
 			scanf("%d%d", &u1, &u2);
 			impressed(u1, u2, &user_skip_head);
-		} else if (strcmp(cmd, qt) == 0) {
-			cout << "# leave the program" << endl;
+		} else if (strcmp(cmd, qt) == 0)
 			return 0;
-		}
 	}
-
-
-
-
-	/*
-	clicked(490234, &user_skip_head);
-	get(490234, 21560664, 2255103, 2, 2, &user_skip_head);
-	profit(21375650, 0.5, &ad_skip_head);
-	impressed(6231944, 490234, &user_skip_head);
-	*/
-	
 
 	return 0;
 }
