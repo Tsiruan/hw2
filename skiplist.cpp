@@ -6,17 +6,10 @@
 #include <time.h>
 #include "skiplist.h"
 
-#define SKIP_LEVEL 25
-//#define DATA_MAX 1000000
+#define SKIP_LEVEL 20
+//#define DATA_MAX 10000000
 
 using namespace std;
-
-int node_amount_generate(int i) {
-	int power = 1;
-	for (int j = 0; j < i; j++)
-		power *= 2;
-	return power;
-}
 
 Data::Data() {
 	user = new User;
@@ -312,6 +305,10 @@ void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 
 
 
+
+
+
+
 int main(int argc, char *argv[]) {
 	int /*c,*/ imp, /*url,*/ a, /*adver, d, p,*/ q, k, t, des, u;
 	short int d, p;
@@ -344,10 +341,6 @@ int main(int argc, char *argv[]) {
 	user_cursor = &user_skip_head;
 	ad_cursor = &ad_skip_head;
 	for (int i = 0; i <= SKIP_LEVEL; i++) {
-		// decide the amount of the nodes we will be building
-		if (i != SKIP_LEVEL)
-			skip_count[i] = node_amount_generate(SKIP_LEVEL - i);
-
 		// building the nodes
 		user_cursor -> decline = new SkipNode_User;
 		ad_cursor -> decline = new SkipNode_Ad;
@@ -357,14 +350,16 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	long long data_control = 0;                               // for work station testing
+	//long long data_control = 0;                               // for work station testing
 	// read in and insert a new data to the data structer
 	while (fscanf(fp, "%hu%d%llu%d%hu%hd%hd%d%d%d%d%d", &c, &imp, &url, &a, &adver, &d, &p, &q, &k, &t, &des, &u) != EOF) {
 		//if (data_control > DATA_MAX)  // for work station testing
 		//	break;
 		//data_control++;
+
 		int now_level;    // current level we are on
-		int build_usr_level, build_ad_level;
+		int build_usr_level = 0;
+		int build_ad_level = 0;
 		build_skip_user_ptr = NULL;
 		build_skip_ad_ptr = NULL;
 
@@ -388,12 +383,11 @@ int main(int argc, char *argv[]) {
 
 		// decide the build levels
 		// we want to build skip nodes along the way we search through the skip list
-		int i = rand() % SKIP_LEVEL;
-		if (skip_count[i] != 0) {
-			build_usr_level = build_ad_level = i + 1;
-			skip_count[i]--;
+		for (int i = 0; rand() % 100 < 37 && i < SKIP_LEVEL; i++) {
+				build_usr_level++;
+				build_ad_level++;
 		}
-		
+
 
 		// insert "new_data -> user" into linklist ====================
 		user_cursor = &user_skip_head;
@@ -425,8 +419,10 @@ int main(int argc, char *argv[]) {
 		}
 
 		// connect builded skip nodes to user
-		build_skip_user_ptr -> user = new_data -> user;
-		build_skip_user_ptr = NULL;
+		if (build_skip_user_ptr != NULL) {
+			build_skip_user_ptr -> user = new_data -> user;
+			build_skip_user_ptr = NULL;
+		}
 
 		// for the insertion at the front
 		if (user_cursor -> user == NULL) {
@@ -490,8 +486,10 @@ int main(int argc, char *argv[]) {
 				ad_cursor = ad_cursor -> decline;
 		}
 		// connect builded skip nodes to ad
-		build_skip_ad_ptr -> ad = new_data -> ad;
-		build_skip_ad_ptr = NULL;
+		if (build_skip_ad_ptr != NULL) {
+			build_skip_ad_ptr -> ad = new_data -> ad;
+			build_skip_ad_ptr = NULL;
+		}
 
 		// for the insertion at the front
 		if (ad_cursor -> ad == NULL) {
