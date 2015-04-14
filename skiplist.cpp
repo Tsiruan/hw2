@@ -522,7 +522,7 @@ int main(int argc, char *argv[]) {
 			ptr_ad -> next = new_data -> ad;
 		}
 	}
-	cout << "read in success" << endl;      // debug
+	//cout << "read in success" << endl;      // debug
 	fclose(fp);
 
 
