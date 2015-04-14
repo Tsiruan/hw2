@@ -97,8 +97,10 @@ void get(int usr, int ad, int q, int p, int d, SkipNode_User *usr_cursor) {
 	while (ad > ptr_user -> data -> ad -> ID)
 		ptr_user = ptr_user -> next;
 	while (ad == ptr_user -> data -> ad -> ID && usr == ptr_user -> ID) {
-		c += ptr_user -> data -> click;
-		imp += ptr_user -> data -> impression;
+		if (q == ptr_user -> data -> query && p == ptr_user -> data -> position && d == ptr_user -> data -> depth) {
+			c += ptr_user -> data -> click;
+			imp += ptr_user -> data -> impression;
+		}
 		ptr_user = ptr_user -> next;
 	}
 
@@ -134,7 +136,7 @@ void clicked(int usr, SkipNode_User *usr_cursor) {
 	cout << "********************" << endl;
 	while (usr == ptr_user -> ID) {
 		if (ptr_user -> data -> click != 0) {
-			if (prev_ad != ptr_user -> data -> ad -> ID && prev_q != ptr_user -> data -> query) {
+			if (prev_ad != ptr_user -> data -> ad -> ID || prev_q != ptr_user -> data -> query) {
 				prev_ad = ptr_user -> data -> ad -> ID;
 				prev_q = ptr_user -> data -> query;
 				cout << prev_ad << " " << prev_q << endl;
@@ -267,6 +269,7 @@ void impressed(int usr_1, int usr_2, SkipNode_User *usr_skip_head) {
 
 void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 	Ad *ptr_ad;
+	int flag = 0;
 
 	// search for the entrance into the linklist
 	for (int now_level = SKIP_LEVEL; now_level > 0; now_level--) {
@@ -293,10 +296,16 @@ void profit(int adID, double theta, SkipNode_Ad *ad_cursor) {
 		while (ptr_ad -> data -> user -> ID == usr && ptr_ad -> ID == adID) {
 			c += ptr_ad -> data -> click;
 			imp += ptr_ad -> data -> impression;
+			if (ptr_ad -> next == NULL) {
+				flag = 1;
+				break;
+			}
 			ptr_ad = ptr_ad -> next;
 		}
 		if (theta <= c/imp)
 			cout << usr << endl;
+		if (flag == 1)
+			break;
 	}
 	cout << "********************" << endl;
 	return;

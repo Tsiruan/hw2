@@ -1,3 +1,5 @@
+all: skiplist.cpp skiplist.h
+	g++ skiplist.cpp -O2 -o demo
 try: skiplist.cpp skiplist.h
 	g++ skiplist.cpp -O2 -o demo
 g: skiplist.cpp skiplist.h
